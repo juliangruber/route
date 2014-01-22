@@ -30,6 +30,7 @@ function create(method) {
       // path
       if (m = re.exec(this.path)) {
         var args = m.slice(1);
+        args.push(next);
         debug('%s %s matches %s %j', this.method, path, this.path, args);
         yield fn.apply(this, args);
         return;

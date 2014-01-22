@@ -74,4 +74,32 @@ describe('Koa Route', function(){
       })
     })
   })
+  
+  describe('arguments', function(){
+    it('should pass keys', function(done){
+      var app = koa();
+      app.use(route.get('/:user/:repo/:commit', function*(user, repo, commit){
+        this.body = user + '/' + repo + '#' + commit;
+      }))
+      
+      request(app.listen())
+      .get('/koajs/koa/1337')
+      .expect('koajs/koa#1337', done);
+    })
+    
+    it('should pass `next`', function(done){
+      var app = koa();
+      app.use(route.get('/:user(tj)', function*(user, next){
+        this.user = user;
+        yield next;
+      }));
+      app.use(function*(){
+        this.body = this.user;
+      });
+      
+      request(app.listen())
+      .get('/tj')
+      .expect('tj', done);
+    })
+  })
 })
